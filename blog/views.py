@@ -3,6 +3,7 @@ from django.utils import timezone
 from .models import Publicar
 from .forms import postearForms
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 
 def listar(request):
     publi=Publicar.objects.filter(fecha_publica__lte=timezone.now()).order_by('fecha_publica')
@@ -11,7 +12,7 @@ def listar(request):
 def detalle_pub(request, pk):
     p=get_object_or_404(Publicar,pk=pk)
     return render(request, 'blog/detalle_pub.html', {'p':p})
-
+@login_required
 def nueva_publicacion(request):
     if request.method == "POST":
         f = postearForms(request.POST)
