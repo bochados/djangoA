@@ -18,7 +18,7 @@ def nueva_publicacion(request):
         if f.is_valid():
             p = f.save(commit=False)
             p.autor = request.user
-            p.fecha_publica = timezone.now()
+            #p.fecha_publica = timezone.now()
             p.save()
             return redirect('postear', pk=p.pk)
     else:
@@ -38,4 +38,21 @@ def editar_publicacion(request,pk):
     else:
         f=postearForms(instance=p)
         return render(request,'blog/nueva_publicacion.html', {'f':f})
+
+def post_draft_list(request):
+    posts = Publicar.objects.filter(fecha_publica__isnull=True).order_by('fecha_creacion')
+    return render(request, 'blog/post_draft_list.html', {'posts': posts})
+
+def post_publish(request, pk):
+    post = get_object_or_404(Publicar, pk=pk)
+    post.publicacion()
+    return redirect('postear', pk=pk)
+
+def post_remove(request, pk):
+    post = get_object_or_404(Publicar, pk=pk)
+    post.delete()
+    return redirect('listar')
+
+
+
 # Create your views here.
